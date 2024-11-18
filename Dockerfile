@@ -1,37 +1,32 @@
-# Menggunakan image Ubuntu terbaru
+# Base image Ubuntu terbaru
 FROM ubuntu:latest
 
-# Mengatur environment variabel
-ENV DEBIAN_FRONTEND=noninteractive
+# Setup environment
+ARG DEBIAN_FRONTEND=noninteractive
 
-# Menginstal dependensi yang diperlukan
+# Update package dan install dependencies
 RUN apt-get update && apt-get install -y \
-  tmux \
-  libsodium23 \
-  libsodium-dev \
-  wget \
-  openssh-server \
-  sudo \
-  curl
+    tmux \
+    wget \
+    libsodium23 \
+    libsodium-dev \
+    openssh-server \
+    sudo
 
-# Membuat folder untuk ssh
-RUN mkdir -p /var/run/sshd
+# Setup SSH
+RUN mkdir /var/run/sshd && \
+    echo 'root:rootpassword' | chpasswd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
+    mkdir -p /root/.ssh && chmod 700 /root/.ssh
 
-# Menambahkan user baru untuk SSH akses
+# Tambahkan user baru
 RUN useradd -m -d /home/codespace -s /bin/bash codespace && \
-    echo "codespace:password" | chpasswd && \
+    echo "codespace:codespacepassword" | chpasswd && \
     adduser codespace sudo
 
-# Mengatur izin akses untuk SSH
-RUN chmod 700 /home/codespace && \
-    chmod 600 /home/codespace/.bashrc
-
-# Menambahkan SSH keys (bisa dikustomisasi jika ingin mengakses dengan key)
-RUN mkdir -p /home/codespace/.ssh && \
-    chown -R codespace:codespace /home/codespace/.ssh
-
-# Membuka port SSH
+# Expose port untuk SSH
 EXPOSE 22
 
-# Mengatur perintah default container
+# Default command
 CMD ["/usr/sbin/sshd", "-D"]
