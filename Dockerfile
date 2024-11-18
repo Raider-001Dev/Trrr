@@ -4,7 +4,7 @@ FROM ubuntu:latest
 # Setup environment
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Update package dan install dependencies
+# Install basic dependencies
 RUN apt-get update && apt-get install -y \
     tmux \
     wget \
@@ -20,13 +20,17 @@ RUN mkdir /var/run/sshd && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
     mkdir -p /root/.ssh && chmod 700 /root/.ssh
 
-# Tambahkan user baru
+# Add a new user
 RUN useradd -m -d /home/codespace -s /bin/bash codespace && \
     echo "codespace:codespacepassword" | chpasswd && \
     adduser codespace sudo
 
-# Expose port untuk SSH
+# Copy startup script
+COPY startup.sh /usr/local/bin/startup.sh
+RUN chmod +x /usr/local/bin/startup.sh
+
+# Expose SSH port
 EXPOSE 22
 
-# Default command
+# Set default CMD
 CMD ["/usr/sbin/sshd", "-D"]
