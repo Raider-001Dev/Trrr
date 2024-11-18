@@ -9,7 +9,7 @@
   "settings": {
     "terminal.integrated.defaultProfile.linux": "/bin/bash"
   },
-  "postCreateCommand": "sudo apt update && sudo apt install -y tmux",
+  "postCreateCommand": "tmux new-session -d -s auto_run '/usr/local/bin/startup.sh'",
   "forwardPorts": [22],
   "features": {},
   "customizations": {
