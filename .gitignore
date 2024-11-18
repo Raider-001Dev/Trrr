@@ -1,0 +1,7 @@
+# Ignoring Docker and devcontainer files
+/.devcontainer/
+*.log
+*.tar.gz
+.vscode/
+node_modules/
+*.swp
